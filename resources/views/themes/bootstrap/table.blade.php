@@ -76,7 +76,7 @@
         </thead>
         <tbody>
             @forelse($rows as $row)
-                <tr>
+                <tr wire:key='row-{{ $row->id }}'>
                     @foreach($selectedColumns as $col)
                         <td>
                             @if(isset($booleanColumns[$col]))
@@ -89,7 +89,7 @@
                                 <div class="form-check form-switch">
                                     <input type="checkbox"
                                         class="form-check-input"
-                                        wire:click="toggleBoolean({{ $row->id }}, '{{ $col }}')"
+                                        wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')"
                                         @checked($isTrue)>
                                     <label class="form-check-label">
                                         {{ $isTrue
@@ -135,3 +135,13 @@
         @endif
     </div>
 </div>
+
+<script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('confirm-toggle', ({ id, column }) => {
+            if (confirm(`Are you sure you want to change ${column} for record ID ${id}?`)) {
+                Livewire.dispatch('toggle-boolean', { id, column });
+            }
+        });
+    });
+</script>

@@ -95,7 +95,7 @@
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox"
                                             class="sr-only peer"
-                                            wire:click="toggleBoolean({{ $row->id }}, '{{ $col }}')"
+                                            wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')"
                                             @checked($isTrue)>
                                         <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 relative transition"></div>
                                         <span class="ml-2">
@@ -144,3 +144,13 @@
         @endif
     </div>
 </div>
+
+<script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('confirm-toggle', ({ id, column }) => {
+            if (confirm(`Are you sure you want to change ${column} for record ID ${id}?`)) {
+                Livewire.dispatch('toggle-boolean', { id, column });
+            }
+        });
+    });
+</script>

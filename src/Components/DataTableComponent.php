@@ -128,6 +128,17 @@ class DataTableComponent extends Component
         }
     }
 
+    public function confirmToggle($id, $column)
+    {
+        $this->dispatch('confirm-toggle', id: $id, column: $column);
+    }
+
+    #[\Livewire\Attributes\On('toggle-boolean')]
+    public function handleToggleBoolean($id, $column)
+    {
+        $this->toggleBoolean($id, $column);
+    }
+
     public function toggleBoolean($id, $column)
     {
         if (!isset($this->booleanColumns[$column])) {
@@ -140,13 +151,8 @@ class DataTableComponent extends Component
 
         $model = $this->model::findOrFail($id);
 
-        // Toggle
-        if ($model->$column == $trueValue) {
-            $model->$column = $falseValue;
-        } else {
-            $model->$column = $trueValue;
-        }
-
+        // Toggle & save
+        $model->$column = ($model->$column == $trueValue) ? $falseValue : $trueValue;
         $model->save();
 
         $this->dispatch('notify', "Updated {$column} for ID {$id}");
