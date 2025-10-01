@@ -3,12 +3,12 @@
 A pure **Laravel Livewire DataTable package** (no jQuery, no external JS).  
 Supports:
 
-- ✔ Search
-- ✔ Filters
-- ✔ Sorting
-- ✔ Pagination
-- ✔ Load More mode
-- ✔ Bootstrap & Tailwind themes
+- Search
+- Filters
+- Sorting
+- Pagination
+- Load More mode
+- Bootstrap & Tailwind themes
 
 ---
 
@@ -16,13 +16,15 @@ Supports:
 
 ```bash
 composer require iamilyaskazi/livewire-datatable
+```
 
-# Publish config & views:
+### Publish config & views:
+```bash
 php artisan vendor:publish --tag=datatable-config
 php artisan vendor:publish --tag=datatable-views
 ```
 
-## Usage
+### Usage
 ```php
 <livewire:data-table
     :model="\App\Models\User::class"
