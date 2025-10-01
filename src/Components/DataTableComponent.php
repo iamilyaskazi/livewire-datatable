@@ -51,13 +51,13 @@ class DataTableComponent extends Component
         $this->columns = $columns;
         $this->filters = $filters;
         $this->theme = $theme ?? config('datatable.theme');
-        
+
         $this->sortField = $sortField;
         $this->sortDirection = $sortDirection;
-        
+
         $this->paginationMode = $paginationMode ?? config('datatable.pagination_mode');
-        $this->perPageOptions = $perPageOptions ?? config('datatable.paginations.'.$this->paginationMode.'.per_page_options');
-        $this->perPage = config('datatable.paginations.'.$this->paginationMode.'.per_page');
+        $this->perPageOptions = $perPageOptions ?? config('datatable.paginations.' . $this->paginationMode . '.per_page_options');
+        $this->perPage = config('datatable.paginations.' . $this->paginationMode . '.per_page');
 
         $this->columnLabels = $columnLabels;
         $this->columnSlots = $columnSlots;
@@ -68,6 +68,28 @@ class DataTableComponent extends Component
 
         // For load more mode
         $this->limit = $this->perPage;
+
+        $this->loadDynamicFilters();
+    }
+
+    /**
+     * Load dynamic filters for the data table.
+     *
+     * @return void
+     */
+    public function loadDynamicFilters()
+    {
+        foreach ($this->filters as $col => $config) {
+            if ($config === 'dynamic') {
+                $this->filters[$col] = $this->model::query()
+                    ->select($col)
+                    ->distinct()
+                    ->orderBy($col)
+                    ->pluck($col)
+                    ->filter() // remove null/empty
+                    ->toArray();
+            }
+        }
     }
 
     public function updatingPerPage($value)
@@ -129,7 +151,7 @@ class DataTableComponent extends Component
             'limit',
         ]);
 
-        $this->perPage = config('datatable.per_page');
+        $this->perPage = config('datatable.paginations.' . $this->paginationMode . '.per_page');
         $this->limit = $this->perPage;
         $this->sortDirection = 'asc';
         $this->resetPage();
