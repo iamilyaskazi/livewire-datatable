@@ -50,7 +50,7 @@ class DataTableComponent extends Component
         $this->model = $model;
         $this->columns = $columns;
         $this->filters = $filters;
-        $this->theme = $theme ?? config('datatable.theme_mode');
+        $this->theme = $theme ?? config('datatable.theme');
         
         $this->sortField = $sortField;
         $this->sortDirection = $sortDirection;
