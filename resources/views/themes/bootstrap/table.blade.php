@@ -3,13 +3,33 @@
 
         <!-- Search -->
         @if($showSearch)
-            <input type="text" wire:model.debounce.500ms="search" class="form-control w-25" placeholder="{{ $searchPlaceholder }}">
+            <input type="text" wire:model.live.debounce.500ms="search" class="form-control w-25"
+                placeholder="{{ $searchPlaceholder }}">
         @endif
+
+        <!-- Column Selector -->
+        <div class="dropdown mb-3">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                Columns
+            </button>
+            <ul class="dropdown-menu p-3">
+                @foreach($availableColumns as $col)
+                    <li>
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" wire:model.live="selectedColumns"
+                                value="{{ $col }}">
+                            {{ $this->getColumnLabel($col) }}
+                        </label>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
 
         <!-- Per Page Options -->
         @if($paginationMode === 'pagination')
             <div>
-                <select wire:model="perPage" class="form-select">
+                <select wire:model.live="perPage" class="form-select">
                     @foreach($perPageOptions as $value => $label)
                         <option value="{{ $value }}">{{ $label }}</option>
                     @endforeach
@@ -28,7 +48,7 @@
     <!-- Filters -->
     <div class="mb-3 d-flex gap-2">
         @foreach($filters as $key => $options)
-            <select wire:model="selectedFilters.{{ $key }}" class="form-select">
+            <select wire:model.live="selectedFilters.{{ $key }}" class="form-select">
                 <option value="">All {{ ucfirst($key) }}</option>
                 @foreach($options as $option)
                     <option value="{{ $option }}">{{ ucfirst($option) }}</option>
@@ -41,7 +61,7 @@
     <table class="{{ $table['class'] }}">
         <thead>
             <tr>
-                @foreach($columns as $col)
+                @foreach($selectedColumns as $col)
                     <th wire:click="sortBy('{{ $col }}')" style="cursor:pointer;">
                         {{ $this->getColumnLabel($col) }}
                         @if($sortField === $col)
@@ -57,7 +77,7 @@
         <tbody>
             @forelse($rows as $row)
                 <tr>
-                    @foreach($columns as $col)
+                    @foreach($selectedColumns as $col)
                         <td>
                             @if($this->hasSlot($col))
                                 {{ $this->getSlot($col)($row) }}
@@ -74,7 +94,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ count($columns) + ($this->hasSlot('actions') ? 1 : 0) }}" class="text-center">
+                    <td colspan="{{ count($selectedColumns) + ($this->hasSlot('actions') ? 1 : 0) }}" class="text-center">
                         No results found
                     </td>
                 </tr>

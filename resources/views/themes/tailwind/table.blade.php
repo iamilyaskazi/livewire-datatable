@@ -8,7 +8,24 @@
                 placeholder="{{ $searchPlaceholder }}">
         @endif
 
+        <!-- Column Selector -->
         <div class="flex gap-3 items-center">
+            <div class="relative mb-4">
+                <button type="button" class="px-3 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300">
+                    Columns
+                </button>
+                <div class="absolute mt-2 bg-white border rounded shadow p-3 z-10">
+                    @foreach($availableColumns as $col)
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" wire:model.live="selectedColumns" value="{{ $col }}"
+                                class="rounded border-gray-300">
+                            <span>{{ $this->getColumnLabel($col) }}</span>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+
+
             <!-- Per Page Options -->
             @if($paginationMode === 'pagination')
                 <div>
@@ -48,7 +65,7 @@
         <table class="{{ $table['class'] }}">
             <thead class="bg-gray-100">
                 <tr>
-                    @foreach($columns as $col)
+                    @foreach($selectedColumns as $col)
                         <th wire:click="sortBy('{{ $col }}')"
                             class="px-4 py-2 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider cursor-pointer select-none">
                             {{ $this->getColumnLabel($col) }}
@@ -66,7 +83,7 @@
             <tbody class="divide-y divide-gray-200">
                 @forelse($rows as $row)
                     <tr class="hover:bg-gray-50">
-                        @foreach($columns as $col)
+                        @foreach($selectedColumns as $col)
                             <td class="px-4 py-2 text-sm text-gray-700">
                                 @if($this->hasSlot($col))
                                     {{ $this->getSlot($col)($row) }}
@@ -83,7 +100,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{ count($columns) + ($this->hasSlot('actions') ? 1 : 0) }}"
+                        <td colspan="{{ count($selectedColumns) + ($this->hasSlot('actions') ? 1 : 0) }}"
                             class="px-4 py-2 text-center text-gray-500">
                             No results found
                         </td>

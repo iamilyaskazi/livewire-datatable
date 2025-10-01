@@ -30,6 +30,9 @@ class DataTableComponent extends Component
     public $showReset;
     public $resetLabel;
 
+    public $availableColumns = [];
+    public $selectedColumns = [];
+
 
     public function mount(
         $model,
@@ -45,10 +48,14 @@ class DataTableComponent extends Component
         $showSearch = null,
         $searchPlaceholder = null,
         $showReset = null,
-        $resetLabel = null
+        $resetLabel = null,
+        $availableColumns = [],
+        $selectedColumns = []
     ) {
         $this->model = $model;
-        $this->columns = $columns;
+        $this->columns = $columns;  // legacy usage
+        $this->availableColumns = $availableColumns ?: $columns;
+        $this->selectedColumns = $selectedColumns ?: $columns;
         $this->filters = $filters;
         $this->theme = $theme ?? config('datatable.theme');
 
