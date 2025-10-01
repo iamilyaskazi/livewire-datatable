@@ -73,14 +73,15 @@ class DataTableComponent extends Component
     }
 
     /**
-     * Load dynamic filters for the data table.
+     * Load dynamic filters for the column of data table.
      *
      * @return void
      */
     public function loadDynamicFilters()
     {
         foreach ($this->filters as $col => $config) {
-            if ($config === 'dynamic') {
+            // Dynamic from base/self model
+            if ($config === 'self') {
                 $this->filters[$col] = $this->model::query()
                     ->select($col)
                     ->distinct()
@@ -89,6 +90,38 @@ class DataTableComponent extends Component
                     ->filter() // remove null/empty
                     ->toArray();
             }
+
+            // Dynamic from external model
+            if (is_array($config) && isset($config['model'], $config['key'], $config['label'])) {
+                $query = $config['model']::query();
+
+                // Apply where clauses if provided
+                if (isset($config['where']) && is_array($config['where'])) {
+                    foreach ($config['where'] as $condition) {
+                        // Supports ['column','operator','value'] or just ['column','value']
+                        if (count($condition) === 3) {
+                            [$column, $operator, $value] = $condition;
+                            $query->where($column, $operator, $value);
+                        } elseif (count($condition) === 2) {
+                            [$column, $value] = $condition;
+                            $query->where($column, $value);
+                        }
+                    }
+                }
+
+                $this->filters[$col] = $query
+                    ->orderBy($config['label'])
+                    ->pluck($config['label'], $config['key'])
+                    ->toArray();
+            }
+
+            // // Dynamic from external model
+            // if (is_array($config) && isset($config['model'], $config['key'], $config['label'])) {
+            //     $this->filters[$col] = $config['model']::query()
+            //         ->orderBy($config['label'])
+            //         ->pluck($config['label'], $config['key']) // key = id, value = name
+            //         ->toArray();
+            // }
         }
     }
 
