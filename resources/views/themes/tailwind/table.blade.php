@@ -1,9 +1,20 @@
 <div class="p-4">
-    <!-- Search -->
     <div class="mb-4">
+        <!-- Search -->
         <input type="text" wire:model.debounce.500ms="search"
             class="w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200"
             placeholder="Search...">
+
+        <!-- Per Page Options -->
+        @if($paginationMode === 'pagination')
+            <div>
+                <select wire:model="perPage" class="rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200">
+                    @foreach($perPageOptions as $option)
+                        <option value="{{ $option }}">{{ $option }} per page</option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
     </div>
 
     <!-- Filters -->
@@ -27,24 +38,40 @@
                     @foreach($columns as $col)
                         <th wire:click="sortBy('{{ $col }}')"
                             class="px-4 py-2 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider cursor-pointer select-none">
-                            {{ ucfirst($col) }}
+                            {{ $this->getColumnLabel($col) }}
                             @if($sortField === $col)
                                 <span class="ml-1">{!! $sortDirection === 'asc' ? '▲' : '▼' !!}</span>
                             @endif
                         </th>
                     @endforeach
+                    @if($this->hasSlot('actions'))
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Actions
+                        </th>
+                    @endif
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
                 @forelse($rows as $row)
                     <tr class="hover:bg-gray-50">
                         @foreach($columns as $col)
-                            <td class="px-4 py-2 text-sm text-gray-700">{{ $row->$col }}</td>
+                            <td class="px-4 py-2 text-sm text-gray-700">
+                                @if($this->hasSlot($col))
+                                    {{ $this->getSlot($col)($row) }}
+                                @else
+                                    {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
+                                @endif
+                            </td>
                         @endforeach
+                        @if($this->hasSlot('actions'))
+                            <td class="px-4 py-2 text-sm text-gray-700">
+                                {{ $this->getSlot('actions')($row) }}
+                            </td>
+                        @endif
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{ count($columns) }}" class="px-4 py-2 text-center text-gray-500">
+                        <td colspan="{{ count($columns) + ($this->hasSlot('actions') ? 1 : 0) }}"
+                            class="px-4 py-2 text-center text-gray-500">
                             No results found
                         </td>
                     </tr>

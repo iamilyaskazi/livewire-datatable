@@ -1,7 +1,18 @@
 <div>
-    <!-- Search -->
-    <div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Search -->
         <input type="text" wire:model.debounce.500ms="search" class="form-control" placeholder="Search...">
+
+        <!-- Per Page Options -->
+        @if($paginationMode === 'pagination')
+            <div>
+                <select wire:model="perPage" class="form-select">
+                    @foreach($perPageOptions as $option)
+                        <option value="{{ $option }}">{{ $option }} per page</option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
     </div>
 
     <!-- Filters -->
@@ -22,24 +33,38 @@
             <tr>
                 @foreach($columns as $col)
                     <th wire:click="sortBy('{{ $col }}')" style="cursor:pointer;">
-                        {{ ucfirst($col) }}
+                        {{ $this->getColumnLabel($col) }}
                         @if($sortField === $col)
                             {!! $sortDirection === 'asc' ? '▲' : '▼' !!}
                         @endif
                     </th>
                 @endforeach
+                @if($this->hasSlot('actions'))
+                    <th>Actions</th>
+                @endif
             </tr>
         </thead>
         <tbody>
             @forelse($rows as $row)
                 <tr>
                     @foreach($columns as $col)
-                        <td>{{ $row->$col }}</td>
+                        <td>
+                            @if($this->hasSlot($col))
+                                {{ $this->getSlot($col)($row) }}
+                            @else
+                                {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
+                            @endif
+                        </td>
                     @endforeach
+                    @if($this->hasSlot('actions'))
+                        <td>
+                            {{ $this->getSlot('actions')($row) }}
+                        </td>
+                    @endif
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ count($columns) }}" class="text-center">
+                    <td colspan="{{ count($columns) + ($this->hasSlot('actions') ? 1 : 0) }}" class="text-center">
                         No results found
                     </td>
                 </tr>

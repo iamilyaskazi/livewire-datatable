@@ -4,24 +4,26 @@ namespace IamIlyasKazi\LivewireDataTable\Components;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use IamIlyasKazi\LivewireDataTable\Traits\WithColumnFormatter;
 
-class DataTable extends Component
+class DataTableComponent extends Component
 {
-    use WithPagination;
+    use WithPagination, WithColumnFormatter;
 
     public $model;
     public $columns = [];
     public $filters = [];
-    public $theme;
     public $search = '';
     public $perPage;
+    public $perPageOptions = [];
+    public $selectedFilters = [];
+    public $theme;
     public $paginationMode;
     public $limit;
-    public $selectedFilters = [];
-
-    protected $queryString = ['search', 'page', 'perPage', 'selectedFilters'];
-    public $sortField = null;
+    public $sortField;
     public $sortDirection = 'asc';
+    public $columnLabels = [];
+    public $columnSlots = [];   
 
     public function mount(
         $model,
@@ -30,7 +32,10 @@ class DataTable extends Component
         $theme = null,
         $sortField = null,
         $sortDirection = 'asc',
-        $paginationMode = null
+        $paginationMode = null,
+        $perPageOptions = null,
+        $columnLabels = [],
+        $columnSlots = []
     ) {
         $this->model = $model;
         $this->columns = $columns;
@@ -40,9 +45,17 @@ class DataTable extends Component
         $this->sortField = $sortField;
         $this->sortDirection = $sortDirection;
         $this->paginationMode = $paginationMode ?? config('datatable.pagination_mode');
+        $this->perPageOptions = $perPageOptions ?? config('datatable.per_page_options');
+        $this->columnLabels = $columnLabels;
+        $this->columnSlots = $columnSlots;
 
         // For load more mode
         $this->limit = $this->perPage;
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
     }
 
     public function updatingSearch()
@@ -65,6 +78,21 @@ class DataTable extends Component
         }
 
         $this->resetPage();
+    }
+
+    public function hasSlot($col): bool
+    {
+        return isset($this->columnSlots[$col]);
+    }
+
+    public function getSlot($col)
+    {
+        return $this->columnSlots[$col] ?? null;
+    }
+
+    public function getColumnLabel($col)
+    {
+        return $this->columnLabels[$col] ?? ucfirst(str_replace('_', ' ', $col));
     }
 
     public function loadMore()
@@ -98,11 +126,10 @@ class DataTable extends Component
         }
 
         // Apply pagination or load more
-        if ($this->paginationMode === 'load-more') {
-            $rows = $query->take($this->limit)->get();
-        } else {
-            $rows = $query->paginate($this->perPage);
-        }
+        $rows = $this->paginationMode === 'load-more'
+            ? $query->take($this->limit)->get()
+            : $query->paginate($this->perPage);
+
 
         // Dynamically load theme view
         return view("datatable::themes.{$this->theme}.table", [

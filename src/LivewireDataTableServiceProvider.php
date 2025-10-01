@@ -3,7 +3,7 @@
 namespace IamIlyasKazi\LivewireDataTable;
 
 use Illuminate\Support\ServiceProvider;
-use IamIlyasKazi\LivewireDataTable\Components\DataTable;
+use IamIlyasKazi\LivewireDataTable\Components\DataTableComponent;
 use Livewire\Livewire;
 
 class LivewireDataTableServiceProvider extends ServiceProvider
@@ -14,7 +14,7 @@ class LivewireDataTableServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'datatable');
 
         // Register Livewire component
-        Livewire::component('data-table', DataTable::class);
+        Livewire::component('data-table-component', DataTableComponent::class);
 
         // Publish config
         $this->publishes([
