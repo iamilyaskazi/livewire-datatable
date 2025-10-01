@@ -89,8 +89,12 @@
                                 <div class="form-check form-switch">
                                     <input type="checkbox"
                                         class="form-check-input"
-                                        wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')"
-                                        @checked($isTrue)>
+                                        @checked($isTrue)
+                                        x-on:click.prevent="
+                                            if (confirm('Are you sure you want to change this?')) {
+                                                $wire.dispatch('toggle-boolean', { id: {{ $row->id }}, column: '{{ $col }}' })
+                                            }
+                                        ">
                                     <label class="form-check-label">
                                         {{ $isTrue
                                             ? ($config['label_true'] ?? 'Yes')
