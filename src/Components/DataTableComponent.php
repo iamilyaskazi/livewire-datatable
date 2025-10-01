@@ -32,6 +32,7 @@ class DataTableComponent extends Component
 
     public $availableColumns = [];
     public $selectedColumns = [];
+    public $booleanColumns = [];
 
 
     public function mount(
@@ -50,12 +51,16 @@ class DataTableComponent extends Component
         $showReset = null,
         $resetLabel = null,
         $availableColumns = [],
-        $selectedColumns = []
+        $selectedColumns = [],
+        $booleanColumns = []
     ) {
         $this->model = $model;
+
         $this->columns = $columns;  // legacy usage
         $this->availableColumns = $availableColumns ?: $columns;
         $this->selectedColumns = $selectedColumns ?: $columns;
+        $this->booleanColumns = $booleanColumns ?? [];
+
         $this->filters = $filters;
         $this->theme = $theme ?? config('datatable.theme');
 
@@ -121,16 +126,33 @@ class DataTableComponent extends Component
                     ->pluck($config['label'], $config['key'])
                     ->toArray();
             }
-
-            // // Dynamic from external model
-            // if (is_array($config) && isset($config['model'], $config['key'], $config['label'])) {
-            //     $this->filters[$col] = $config['model']::query()
-            //         ->orderBy($config['label'])
-            //         ->pluck($config['label'], $config['key']) // key = id, value = name
-            //         ->toArray();
-            // }
         }
     }
+
+    public function toggleBoolean($id, $column)
+    {
+        $model = $this->model::findOrFail($id);
+
+        $current = $model->$column;
+
+        // Normalize values
+        $trueValues = [1, '1', true, 'true', 'yes', 'y', 'Yes', 'Y', 'YES', 'active', 'Active', 'ACTIVE'];
+        $falseValues = [0, '0', false, 'false', 'no', 'n', 'No', 'N', 'NO', 'inactive', 'Inactive', 'INACTIVE'];
+
+        if (in_array($current, $trueValues, true)) {
+            $model->$column = 0;
+        } elseif (in_array($current, $falseValues, true)) {
+            $model->$column = 1;
+        } else {
+            // fallback: toggle truthy/falsy
+            $model->$column = !$current;
+        }
+
+        $model->save();
+
+        $this->dispatch('notify', "Updated {$column} for ID {$id}");
+    }
+
 
     public function updatingPerPage($value)
     {

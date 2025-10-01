@@ -79,10 +79,24 @@
                 <tr>
                     @foreach($selectedColumns as $col)
                         <td>
-                            @if($this->hasSlot($col))
-                                {{ $this->getSlot($col)($row) }}
+                            @if(isset($booleanColumns[$col]))
+                                <div class="form-check form-switch">
+                                    <input type="checkbox"
+                                        class="form-check-input"
+                                        wire:click="toggleBoolean({{ $row->id }}, '{{ $col }}')"
+                                        @checked(in_array($row->$col, [1,'1',true,'true','yes','y','Yes','Y']))>
+                                    <label class="form-check-label">
+                                        {{ in_array($row->$col, [1,'1',true,'true','yes','y','Yes','Y'])
+                                            ? $booleanColumns[$col]['label_true'] ?? 'Yes'
+                                            : $booleanColumns[$col]['label_false'] ?? 'No' }}
+                                    </label>
+                                </div>
                             @else
-                                {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
+                                @if($this->hasSlot($col))
+                                    {{ $this->getSlot($col)($row) }}
+                                @else
+                                    {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
+                                @endif
                             @endif
                         </td>
                     @endforeach

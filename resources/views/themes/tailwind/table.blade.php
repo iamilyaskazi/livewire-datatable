@@ -8,8 +8,9 @@
                 placeholder="{{ $searchPlaceholder }}">
         @endif
 
-        <!-- Column Selector -->
         <div class="flex gap-3 items-center">
+            
+            <!-- Column Selector -->
             <div class="relative mb-4">
                 <button type="button" class="px-3 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300">
                     Columns
@@ -24,7 +25,6 @@
                     @endforeach
                 </div>
             </div>
-
 
             <!-- Per Page Options -->
             @if($paginationMode === 'pagination')
@@ -85,10 +85,25 @@
                     <tr class="hover:bg-gray-50">
                         @foreach($selectedColumns as $col)
                             <td class="px-4 py-2 text-sm text-gray-700">
-                                @if($this->hasSlot($col))
-                                    {{ $this->getSlot($col)($row) }}
+                                @if(isset($booleanColumns[$col]))
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="checkbox"
+                                            class="sr-only peer"
+                                            wire:click="toggleBoolean({{ $row->id }}, '{{ $col }}')"
+                                            @checked(in_array($row->$col, [1,'1',true,'true','yes','y','Yes','Y']))>
+                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 relative transition"></div>
+                                        <span class="ml-2">
+                                            {{ in_array($row->$col, [1,'1',true,'true','yes','y','Yes','Y'])
+                                                ? $booleanColumns[$col]['label_true'] ?? 'Yes'
+                                                : $booleanColumns[$col]['label_false'] ?? 'No' }}
+                                        </span>
+                                    </label>
                                 @else
-                                    {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
+                                    @if($this->hasSlot($col))
+                                        {{ $this->getSlot($col)($row) }}
+                                    @else
+                                        {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
+                                    @endif
                                 @endif
                             </td>
                         @endforeach
