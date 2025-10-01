@@ -25,6 +25,8 @@ class DataTableComponent extends Component
     public $columnLabels = [];
     public $columnSlots = [];
 
+    public $showSearch;
+    public $searchPlaceholder;
     public $showReset;
     public $resetLabel;
 
@@ -40,22 +42,29 @@ class DataTableComponent extends Component
         $perPageOptions = null,
         $columnLabels = [],
         $columnSlots = [],
+        $showSearch = null,
+        $searchPlaceholder = null,
         $showReset = null,
         $resetLabel = null
     ) {
         $this->model = $model;
         $this->columns = $columns;
         $this->filters = $filters;
-        $this->perPage = config('datatable.per_page');
-        $this->theme = $theme ?? config('datatable.theme');
+        $this->theme = $theme ?? config('datatable.theme_mode');
+        
         $this->sortField = $sortField;
         $this->sortDirection = $sortDirection;
+        
         $this->paginationMode = $paginationMode ?? config('datatable.pagination_mode');
-        $this->perPageOptions = $perPageOptions ?? config('datatable.per_page_options');
+        $this->perPageOptions = $perPageOptions ?? config('datatable.paginations.'.$this->paginationMode.'.per_page_options');
+        $this->perPage = config('datatable.paginations.'.$this->paginationMode.'.per_page');
+
         $this->columnLabels = $columnLabels;
         $this->columnSlots = $columnSlots;
-        $this->showReset = $showReset ?? config('datatable.show_reset');
-        $this->resetLabel = $resetLabel ?? config('datatable.reset_label');
+        $this->showSearch = $showSearch ?? config('datatable.search.show');
+        $this->searchPlaceholder = $searchPlaceholder ?? config('datatable.search.placeholder');
+        $this->showReset = $showReset ?? config('datatable.reset.show');
+        $this->resetLabel = $resetLabel ?? config('datatable.reset.label');
 
         // For load more mode
         $this->limit = $this->perPage;

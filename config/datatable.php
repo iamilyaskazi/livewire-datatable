@@ -37,23 +37,57 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Items Per Page
+    | Pagination Configurations
     |--------------------------------------------------------------------------
     */
-    'per_page' => 10,
+    'paginations' => [
+        'pagination' => [   //.. Pagination Mode
+            /*
+             * Default Items Per Page
+             */
+            'per_page' => 10,
+
+            /*
+             * Per Page Options
+             */
+            'per_page_options' => [5, 10, 20, 50, 75, 100],
+        ],
+
+        'load-more' => [    //.. Load More Mode
+            /*
+             * Default Items Per Load More
+             */
+            'per_page' => 10,
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
-    | Per Page Options
+    | Search Box
     |--------------------------------------------------------------------------
     */
-    'per_page_options' => [10, 20, 50, 100],
+    'search' => [
+        'show' => true,
+        'placeholder' => 'Search...',
+    ],
 
     /*
     |--------------------------------------------------------------------------
     | Reset Button
     |--------------------------------------------------------------------------
     */
-    'show_reset' => true,
-    'reset_label' => 'Reset',
+    'reset' => [
+        'show' => true,
+        'label' => 'Reset',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Action Column on Table Headers Row
+    |--------------------------------------------------------------------------
+    */
+    'action' => [
+        'show' => true,
+        'label' => 'Action',
+    ]
 ];
