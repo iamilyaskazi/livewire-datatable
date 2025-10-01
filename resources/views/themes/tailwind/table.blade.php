@@ -86,16 +86,22 @@
                         @foreach($selectedColumns as $col)
                             <td class="px-4 py-2 text-sm text-gray-700">
                                 @if(isset($booleanColumns[$col]))
+                                    @php
+                                        $config = $booleanColumns[$col];
+                                        $trueValue = $config['true'] ?? 1;
+                                        $falseValue = $config['false'] ?? 0;
+                                        $isTrue = $row->$col == $trueValue;
+                                    @endphp
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox"
                                             class="sr-only peer"
                                             wire:click="toggleBoolean({{ $row->id }}, '{{ $col }}')"
-                                            @checked(in_array($row->$col, [1,'1',true,'true','yes','y','Yes','Y']))>
+                                            @checked($isTrue)>
                                         <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 relative transition"></div>
                                         <span class="ml-2">
-                                            {{ in_array($row->$col, [1,'1',true,'true','yes','y','Yes','Y'])
-                                                ? $booleanColumns[$col]['label_true'] ?? 'Yes'
-                                                : $booleanColumns[$col]['label_false'] ?? 'No' }}
+                                            {{ $isTrue
+                                                ? ($config['label_true'] ?? 'Yes')
+                                                : ($config['label_false'] ?? 'No') }}
                                         </span>
                                     </label>
                                 @else

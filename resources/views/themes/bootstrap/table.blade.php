@@ -80,15 +80,21 @@
                     @foreach($selectedColumns as $col)
                         <td>
                             @if(isset($booleanColumns[$col]))
+                                @php
+                                    $config = $booleanColumns[$col];
+                                    $trueValue = $config['true'] ?? 1;
+                                    $falseValue = $config['false'] ?? 0;
+                                    $isTrue = $row->$col == $trueValue;
+                                @endphp
                                 <div class="form-check form-switch">
                                     <input type="checkbox"
                                         class="form-check-input"
                                         wire:click="toggleBoolean({{ $row->id }}, '{{ $col }}')"
-                                        @checked(in_array($row->$col, [1,'1',true,'true','yes','y','Yes','Y']))>
+                                        @checked($isTrue)>
                                     <label class="form-check-label">
-                                        {{ in_array($row->$col, [1,'1',true,'true','yes','y','Yes','Y'])
-                                            ? $booleanColumns[$col]['label_true'] ?? 'Yes'
-                                            : $booleanColumns[$col]['label_false'] ?? 'No' }}
+                                        {{ $isTrue
+                                            ? ($config['label_true'] ?? 'Yes')
+                                            : ($config['label_false'] ?? 'No') }}
                                     </label>
                                 </div>
                             @else
