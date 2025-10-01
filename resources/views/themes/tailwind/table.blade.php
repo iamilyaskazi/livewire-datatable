@@ -14,8 +14,8 @@
                 <div>
                     <select wire:model="perPage"
                         class="rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200">
-                        @foreach($perPageOptions as $option)
-                            <option value="{{ $option }}">{{ $option }} per page</option>
+                        @foreach($perPageOptions as $value => $label)
+                            <option value="{{ $value }}">{{ $label }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -45,7 +45,7 @@
 
     <!-- Table -->
     <div class="overflow-x-auto">
-        <table class="{{ $config['class'] }}">
+        <table class="{{ $table['class'] }}">
             <thead class="bg-gray-100">
                 <tr>
                     @foreach($columns as $col)

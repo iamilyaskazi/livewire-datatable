@@ -10,8 +10,8 @@
         @if($paginationMode === 'pagination')
             <div>
                 <select wire:model="perPage" class="form-select">
-                    @foreach($perPageOptions as $option)
-                        <option value="{{ $option }}">{{ $option }} per page</option>
+                    @foreach($perPageOptions as $value => $label)
+                        <option value="{{ $value }}">{{ $label }}</option>
                     @endforeach
                 </select>
             </div>
@@ -38,7 +38,7 @@
     </div>
 
     <!-- Table -->
-    <table class="{{ $config['class'] }}">
+    <table class="{{ $table['class'] }}">
         <thead>
             <tr>
                 @foreach($columns as $col)

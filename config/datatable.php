@@ -17,7 +17,7 @@ return [
     */
     'themes' => [
         'bootstrap' => [
-            'class' => 'table table-striped',
+            'class' => 'table table-striped table-bordered',
             'pagination' => 'datatable::themes.bootstrap.pagination',
         ],
         'tailwind' => [
@@ -50,7 +50,14 @@ return [
             /*
              * Per Page Options
              */
-            'per_page_options' => [5, 10, 20, 50, 75, 100],
+            'per_page_options' => [
+                5   => '5 per page',
+                10  => '10 per page',
+                20  => '20 per page',
+                50  => '50 per page',
+                75  => '75 per page',
+                100 => '100 per page'
+            ],
         ],
 
         'load-more' => [    //.. Load More Mode

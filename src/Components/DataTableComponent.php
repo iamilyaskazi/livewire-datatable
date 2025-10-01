@@ -167,7 +167,7 @@ class DataTableComponent extends Component
 
         // Dynamically load theme view
         return view("datatable::themes.{$this->theme}.table", [
-            'config' => config('datatable.themes.' . $this->theme),
+            'table' => config('datatable.themes.' . $this->theme),
             'rows' => $rows,
         ]);
     }
