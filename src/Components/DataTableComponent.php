@@ -23,7 +23,8 @@ class DataTableComponent extends Component
     public $sortField;
     public $sortDirection = 'asc';
     public $columnLabels = [];
-    public $columnSlots = [];   
+    public $columnSlots = [];
+
 
     public function mount(
         $model,
@@ -98,6 +99,23 @@ class DataTableComponent extends Component
     public function loadMore()
     {
         $this->limit += $this->perPage;
+    }
+
+    public function resetTable()
+    {
+        $this->reset([
+            'search',
+            'selectedFilters',
+            'sortField',
+            'sortDirection',
+            'perPage',
+            'limit',
+        ]);
+
+        $this->perPage = config('datatable.per_page');
+        $this->limit = $this->perPage;
+        $this->sortDirection = 'asc';
+        $this->resetPage();
     }
 
     public function render()

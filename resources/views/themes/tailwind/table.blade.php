@@ -1,20 +1,28 @@
 <div class="p-4">
-    <div class="mb-4">
+    <div class="flex justify-between items-center mb-4">
         <!-- Search -->
         <input type="text" wire:model.debounce.500ms="search"
             class="w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200"
             placeholder="Search...">
 
-        <!-- Per Page Options -->
-        @if($paginationMode === 'pagination')
-            <div>
-                <select wire:model="perPage" class="rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200">
-                    @foreach($perPageOptions as $option)
-                        <option value="{{ $option }}">{{ $option }} per page</option>
-                    @endforeach
-                </select>
-            </div>
-        @endif
+        <div class="flex gap-3 items-center">
+            <!-- Per Page Options -->
+            @if($paginationMode === 'pagination')
+                <div>
+                    <select wire:model="perPage" class="rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200">
+                        @foreach($perPageOptions as $option)
+                            <option value="{{ $option }}">{{ $option }} per page</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
+            <!-- Reset Button -->
+            <button wire:click="resetTable"
+                    class="px-3 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300">
+                Reset
+            </button>
+        </div>
     </div>
 
     <!-- Filters -->

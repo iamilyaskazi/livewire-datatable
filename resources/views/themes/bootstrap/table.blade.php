@@ -1,7 +1,7 @@
 <div>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <!-- Search -->
-        <input type="text" wire:model.debounce.500ms="search" class="form-control" placeholder="Search...">
+        <input type="text" wire:model.debounce.500ms="search" class="form-control w-25" placeholder="Search...">
 
         <!-- Per Page Options -->
         @if($paginationMode === 'pagination')
@@ -13,6 +13,11 @@
                 </select>
             </div>
         @endif
+
+        <!-- Reset Button -->
+        <button wire:click="resetTable" type="button" class="btn btn-outline-secondary">
+            Reset
+        </button>
     </div>
 
     <!-- Filters -->
