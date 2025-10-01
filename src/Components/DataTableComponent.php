@@ -34,7 +34,6 @@ class DataTableComponent extends Component
     public $selectedColumns = [];
     public $booleanColumns = [];
 
-
     public function mount(
         $model,
         $columns = [],
@@ -131,21 +130,21 @@ class DataTableComponent extends Component
 
     public function toggleBoolean($id, $column)
     {
+        if (!isset($this->booleanColumns[$column])) {
+            return;
+        }
+
+        $config = $this->booleanColumns[$column];
+        $trueValue = $config['true'] ?? 1;
+        $falseValue = $config['false'] ?? 0;
+
         $model = $this->model::findOrFail($id);
 
-        $current = $model->$column;
-
-        // Normalize values
-        $trueValues = [1, '1', true, 'true', 'yes', 'y', 'Yes', 'Y', 'YES', 'active', 'Active', 'ACTIVE'];
-        $falseValues = [0, '0', false, 'false', 'no', 'n', 'No', 'N', 'NO', 'inactive', 'Inactive', 'INACTIVE'];
-
-        if (in_array($current, $trueValues, true)) {
-            $model->$column = 0;
-        } elseif (in_array($current, $falseValues, true)) {
-            $model->$column = 1;
+        // Toggle
+        if ($model->$column == $trueValue) {
+            $model->$column = $falseValue;
         } else {
-            // fallback: toggle truthy/falsy
-            $model->$column = !$current;
+            $model->$column = $trueValue;
         }
 
         $model->save();

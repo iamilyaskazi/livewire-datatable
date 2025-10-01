@@ -96,5 +96,5 @@ return [
     'action' => [
         'show' => true,
         'label' => 'Action',
-    ]
+    ],
 ];
