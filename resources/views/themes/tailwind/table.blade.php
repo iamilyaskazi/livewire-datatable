@@ -9,7 +9,8 @@
             <!-- Per Page Options -->
             @if($paginationMode === 'pagination')
                 <div>
-                    <select wire:model="perPage" class="rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200">
+                    <select wire:model="perPage"
+                        class="rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200">
                         @foreach($perPageOptions as $option)
                             <option value="{{ $option }}">{{ $option }} per page</option>
                         @endforeach
@@ -18,10 +19,11 @@
             @endif
 
             <!-- Reset Button -->
-            <button wire:click="resetTable"
-                    class="px-3 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300">
-                Reset
-            </button>
+            @if($showReset)
+                <button wire:click="resetTable" class="px-3 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300">
+                    Reset
+                </button>
+            @endif
         </div>
     </div>
 

@@ -15,9 +15,11 @@
         @endif
 
         <!-- Reset Button -->
-        <button wire:click="resetTable" type="button" class="btn btn-outline-secondary">
-            Reset
-        </button>
+        @if($showReset)
+            <button wire:click="resetTable" type="button" class="btn btn-outline-secondary">
+                Reset
+            </button>
+        @endif
     </div>
 
     <!-- Filters -->

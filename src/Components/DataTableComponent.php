@@ -25,6 +25,9 @@ class DataTableComponent extends Component
     public $columnLabels = [];
     public $columnSlots = [];
 
+    public $showReset;
+    public $resetLabel;
+
 
     public function mount(
         $model,
@@ -36,7 +39,9 @@ class DataTableComponent extends Component
         $paginationMode = null,
         $perPageOptions = null,
         $columnLabels = [],
-        $columnSlots = []
+        $columnSlots = [],
+        $showReset = null,
+        $resetLabel = null
     ) {
         $this->model = $model;
         $this->columns = $columns;
@@ -49,13 +54,16 @@ class DataTableComponent extends Component
         $this->perPageOptions = $perPageOptions ?? config('datatable.per_page_options');
         $this->columnLabels = $columnLabels;
         $this->columnSlots = $columnSlots;
+        $this->showReset = $showReset ?? config('datatable.show_reset');
+        $this->resetLabel = $resetLabel ?? config('datatable.reset_label');
 
         // For load more mode
         $this->limit = $this->perPage;
     }
 
-    public function updatingPerPage()
+    public function updatingPerPage($value)
     {
+        $this->perPage = (int) $value;
         $this->resetPage();
     }
 
