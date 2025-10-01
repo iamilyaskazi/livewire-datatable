@@ -63,6 +63,9 @@ class DataTableComponent extends Component
 
     public function updatingPerPage($value)
     {
+        logger()->info('updatingPerPage current value: ' . $this->perPage);
+        logger()->info('updatingPerPage called with value: ' . $value);
+
         $this->perPage = (int) $value;
         $this->resetPage();
     }
@@ -156,6 +159,7 @@ class DataTableComponent extends Component
             ? $query->take($this->limit)->get()
             : $query->paginate($this->perPage);
 
+        dd($this->perPage);
 
         // Dynamically load theme view
         return view("datatable::themes.{$this->theme}.table", [
