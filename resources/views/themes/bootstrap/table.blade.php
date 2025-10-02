@@ -16,8 +16,11 @@
                 @foreach($availableColumns as $col)
                     <li>
                         <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" wire:model.live="selectedColumns"
-                                value="{{ $col }}">
+                            <input type="checkbox" 
+                                class="form-check-input" 
+                                wire:model.live="selectedColumns"
+                                value="{{ $col }}"
+                                @checked(in_array($col, $selectedColumns))>
                             {{ $this->getColumnLabel($col) }}
                         </label>
                     </li>
@@ -61,13 +64,15 @@
     <table class="{{ $table['class'] }}">
         <thead>
             <tr>
-                @foreach($selectedColumns as $col)
-                    <th wire:click="sortBy('{{ $col }}')" style="cursor:pointer;" wire:key='thCol-{{ $loop->index }}'>
-                        {{ $this->getColumnLabel($col) }}
-                        @if($sortField === $col)
-                            {!! $sortDirection === 'asc' ? '▲' : '▼' !!}
-                        @endif
-                    </th>
+                @foreach($availableColumns as $col)
+                    @if(in_array($col, $selectedColumns))
+                        <th wire:click="sortBy('{{ $col }}')" style="cursor:pointer;" wire:key='thCol-{{ $loop->index }}'>
+                            {{ $this->getColumnLabel($col) }}
+                            @if($sortField === $col)
+                                {!! $sortDirection === 'asc' ? '▲' : '▼' !!}
+                            @endif
+                        </th>
+                    @endif
                 @endforeach
                 @if($this->hasSlot('actions'))
                     <th>Actions</th>
@@ -77,42 +82,44 @@
         <tbody>
             @forelse($rows as $row)
                 <tr wire:key='row-{{ $loop->index }}'>
-                    @foreach($selectedColumns as $col)
-                        <td wire:key='rowCol-{{ $loop->parent->index }}-{{ $loop->index }}'>
-                            @if(isset($booleanColumns[$col]))
-                                @php
-                                    $config = $booleanColumns[$col];
-                                    $trueValue = $config['true'] ?? 1;
-                                    $falseValue = $config['false'] ?? 0;
-                                    $isTrue = $row->$col == $trueValue;
-                                @endphp
+                    @foreach($availableColumns as $col)
+                        @if(in_array($col, $selectedColumns))
+                            <td wire:key='rowCol-{{ $loop->parent->index }}-{{ $loop->index }}'>
+                                @if(isset($booleanColumns[$col]))
+                                    @php
+                                        $config = $booleanColumns[$col];
+                                        $trueValue = $config['true'] ?? 1;
+                                        $falseValue = $config['false'] ?? 0;
+                                        $isTrue = $row->$col == $trueValue;
+                                    @endphp
 
-                                <div class="form-check form-switch">
-                                    <input type="checkbox"
-                                        wire:key='cbToggle-{{ $loop->parent->index }}-{{ $loop->index }}'
-                                        wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')"
-                                        wire:loading.attr="disabled"
-                                        wire:model.live='booleanColumnsState.{{ $row->id }}.{{ $col }}'
-                                        class="form-check-input"
-                                        role="switch"
-                                        @checked($isTrue)
-                                    >
-                                    <label class="form-check-label" style="cursor: pointer;"
-                                        wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')">
-                                        {{ $isTrue
-                                                ? ($config['label_true'] ?? 'Yes')
-                                                : ($config['label_false'] ?? 'No') }}
-                                    </label>
-                                </div>
+                                    <div class="form-check form-switch">
+                                        <input type="checkbox"
+                                            wire:key='cbToggle-{{ $loop->parent->index }}-{{ $loop->index }}'
+                                            wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')"
+                                            wire:loading.attr="disabled"
+                                            wire:model.live='booleanColumnsState.{{ $row->id }}.{{ $col }}'
+                                            class="form-check-input"
+                                            role="switch"
+                                            @checked($isTrue)
+                                        >
+                                        <label class="form-check-label" style="cursor: pointer;"
+                                            wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')">
+                                            {{ $isTrue
+                                                    ? ($config['label_true'] ?? 'Yes')
+                                                    : ($config['label_false'] ?? 'No') }}
+                                        </label>
+                                    </div>
 
-                            @else
-                                @if($this->hasSlot($col))
-                                    {{ $this->getSlot($col)($row) }}
                                 @else
-                                    {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
+                                    @if($this->hasSlot($col))
+                                        {{ $this->getSlot($col)($row) }}
+                                    @else
+                                        {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
+                                    @endif
                                 @endif
-                            @endif
-                        </td>
+                            </td>
+                        @endif
                     @endforeach
                     @if($this->hasSlot('actions'))
                         <td>

@@ -18,8 +18,11 @@
                 <div class="absolute mt-2 bg-white border rounded shadow p-3 z-10">
                     @foreach($availableColumns as $col)
                         <label class="flex items-center space-x-2">
-                            <input type="checkbox" wire:model.live="selectedColumns" value="{{ $col }}"
-                                class="rounded border-gray-300">
+                            <input type="checkbox" 
+                                wire:model.live="selectedColumns" 
+                                value="{{ $col }}"
+                                class="rounded border-gray-300"
+                                @checked(in_array($col, $selectedColumns))>
                             <span>{{ $this->getColumnLabel($col) }}</span>
                         </label>
                     @endforeach
@@ -65,14 +68,16 @@
         <table class="{{ $table['class'] }}">
             <thead class="bg-gray-100">
                 <tr>
-                    @foreach($selectedColumns as $col)
-                        <th wire:click="sortBy('{{ $col }}')"
-                            class="px-4 py-2 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider cursor-pointer select-none">
-                            {{ $this->getColumnLabel($col) }}
-                            @if($sortField === $col)
-                                <span class="ml-1">{!! $sortDirection === 'asc' ? '▲' : '▼' !!}</span>
-                            @endif
-                        </th>
+                    @foreach($availableColumns as $col)
+                        @if(in_array($col, $selectedColumns))
+                            <th wire:click="sortBy('{{ $col }}')"
+                                class="px-4 py-2 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider cursor-pointer select-none">
+                                {{ $this->getColumnLabel($col) }}
+                                @if($sortField === $col)
+                                    <span class="ml-1">{!! $sortDirection === 'asc' ? '▲' : '▼' !!}</span>
+                                @endif
+                            </th>
+                        @endif
                     @endforeach
                     @if($this->hasSlot('actions'))
                         <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Actions
@@ -83,54 +88,56 @@
             <tbody class="divide-y divide-gray-200">
                 @forelse($rows as $row)
                     <tr class="hover:bg-gray-50">
-                        @foreach($selectedColumns as $col)
-                            <td class="px-4 py-2 text-sm text-gray-700">
-                                @if(isset($booleanColumns[$col]))
-                                    @php
-                                        $config = $booleanColumns[$col];
-                                        $trueValue = $config['true'] ?? 1;
-                                        $falseValue = $config['false'] ?? 0;
-                                        $isTrue = $row->$col == $trueValue;
-                                    @endphp
-                                    <label class="inline-flex items-center cursor-pointer" 
-                                        x-data
-                                        x-on:click.prevent="
-                                            if (confirm('Are you sure you want to change this?')) {
-                                                $wire.toggleBoolean({{ $row->id }}, '{{ $col }}')
-                                            }
-                                        ">
-                                        <input type="checkbox"
-                                            class="sr-only peer"
-                                            @checked($isTrue)>
-                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 transition"></div>
-                                        <span class="ml-2">
-                                            {{ $isTrue ? ($config['label_true'] ?? 'Yes') : ($config['label_false'] ?? 'No') }}
-                                        </span>
-                                    </label>
-                                    {{-- <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox"
-                                            class="sr-only peer"
-                                            @checked($isTrue)
+                        @foreach($availableColumns as $col)
+                            @if(in_array($col, $selectedColumns))
+                                <td class="px-4 py-2 text-sm text-gray-700">
+                                    @if(isset($booleanColumns[$col]))
+                                        @php
+                                            $config = $booleanColumns[$col];
+                                            $trueValue = $config['true'] ?? 1;
+                                            $falseValue = $config['false'] ?? 0;
+                                            $isTrue = $row->$col == $trueValue;
+                                        @endphp
+                                        <label class="inline-flex items-center cursor-pointer" 
+                                            x-data
                                             x-on:click.prevent="
                                                 if (confirm('Are you sure you want to change this?')) {
-                                                    $wire.dispatch('toggle-boolean', { id: {{ $row->id }}, column: '{{ $col }}' })
+                                                    $wire.toggleBoolean({{ $row->id }}, '{{ $col }}')
                                                 }
                                             ">
-                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 relative transition"></div>
-                                        <span class="ml-2">
-                                            {{ $isTrue
-                                                ? ($config['label_true'] ?? 'Yes')
-                                                : ($config['label_false'] ?? 'No') }}
-                                        </span>
-                                    </label> --}}
-                                @else
-                                    @if($this->hasSlot($col))
-                                        {{ $this->getSlot($col)($row) }}
+                                            <input type="checkbox"
+                                                class="sr-only peer"
+                                                @checked($isTrue)>
+                                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 transition"></div>
+                                            <span class="ml-2">
+                                                {{ $isTrue ? ($config['label_true'] ?? 'Yes') : ($config['label_false'] ?? 'No') }}
+                                            </span>
+                                        </label>
+                                        {{-- <label class="inline-flex items-center cursor-pointer">
+                                            <input type="checkbox"
+                                                class="sr-only peer"
+                                                @checked($isTrue)
+                                                x-on:click.prevent="
+                                                    if (confirm('Are you sure you want to change this?')) {
+                                                        $wire.dispatch('toggle-boolean', { id: {{ $row->id }}, column: '{{ $col }}' })
+                                                    }
+                                                ">
+                                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 relative transition"></div>
+                                            <span class="ml-2">
+                                                {{ $isTrue
+                                                    ? ($config['label_true'] ?? 'Yes')
+                                                    : ($config['label_false'] ?? 'No') }}
+                                            </span>
+                                        </label> --}}
                                     @else
-                                        {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
+                                        @if($this->hasSlot($col))
+                                            {{ $this->getSlot($col)($row) }}
+                                        @else
+                                            {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
+                                        @endif
                                     @endif
-                                @endif
-                            </td>
+                                </td>
+                            @endif
                         @endforeach
                         @if($this->hasSlot('actions'))
                             <td class="px-4 py-2 text-sm text-gray-700">
