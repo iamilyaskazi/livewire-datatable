@@ -33,6 +33,7 @@ class DataTableComponent extends Component
     public $availableColumns = [];
     public $selectedColumns = [];
     public $booleanColumns = [];
+    public $booleanColumnsState = [];
 
     public function mount(
         $model,
@@ -154,11 +155,9 @@ class DataTableComponent extends Component
         $model->save();
 
         // force re-render
-        // $this->resetPage();
-        
-        // Force a refresh of the component's view
-        // This will re-run the $rows loop and re-evaluate the @php block and @checked
-        $this->dispatch('$refresh'); 
+        $this->resetPage();
+
+        $this->booleanColumnsState[$id][$column] = $model->$column;
 
         $this->dispatch('notify', "Updated {$column} for ID {$id}");
     }
