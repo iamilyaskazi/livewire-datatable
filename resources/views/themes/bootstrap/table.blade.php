@@ -85,14 +85,23 @@
                     @foreach($availableColumns as $col)
                         @if(in_array($col, $selectedColumns))
                             <td class="text-{{ $this->getAlignColumn($col) }}" wire:key='rowCol-{{ $loop->parent->index }}-{{ $loop->index }}'>
-                                @if(isset($booleanColumns[$col]))
+                                
+                                @if(isset($statusColumns[$col]))
+                                    @php
+                                        $statusValue = $row->$col;
+                                        $badgeClass = $statusColumns[$col][$statusValue] ?? 'secondary';
+                                    @endphp
+                                    <span class="badge bg-{{ $badgeClass }}">
+                                        {{ $statusValue }}
+                                    </span>
+
+                                @elseif(isset($booleanColumns[$col]))
                                     @php
                                         $config = $booleanColumns[$col];
                                         $trueValue = $config['true'] ?? 1;
                                         $falseValue = $config['false'] ?? 0;
                                         $isTrue = $row->$col == $trueValue;
                                     @endphp
-
                                     <div class="d-flex justify-content-{{ $this->getAlignColumn($col) }}">
                                         <div class="form-check form-switch">
                                             <input type="checkbox"
@@ -112,6 +121,7 @@
                                             </label>
                                         </div>
                                     </div>
+
                                 @else
                                     @if($this->hasSlot($col))
                                         {{ $this->getSlot($col)($row) }}

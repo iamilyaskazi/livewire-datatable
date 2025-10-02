@@ -91,44 +91,45 @@
                         @foreach($availableColumns as $col)
                             @if(in_array($col, $selectedColumns))
                                 <td class="px-4 py-2 text-sm text-gray-700 text-{{ $this->getAlignColumn($col) }}">
-                                    @if(isset($booleanColumns[$col]))
+                                    @if(isset($statusColumns[$col]))
+                                        @php
+                                            $statusValue = $row->$col;
+                                            $statusClass = match($statusColumns[$col][$statusValue] ?? '') {
+                                                'success' => 'bg-green-100 text-green-800',
+                                                'danger'  => 'bg-red-100 text-red-800',
+                                                'warning' => 'bg-yellow-100 text-yellow-800',
+                                                default   => 'bg-gray-100 text-gray-800',
+                                            };
+                                        @endphp
+                                        <span class="px-2 inline-flex text-xs font-semibold leading-5 rounded-full {{ $statusClass }}">
+                                            {{ $statusValue }}
+                                        </span>
+
+                                    @elseif(isset($booleanColumns[$col]))
                                         @php
                                             $config = $booleanColumns[$col];
                                             $trueValue = $config['true'] ?? 1;
                                             $falseValue = $config['false'] ?? 0;
                                             $isTrue = $row->$col == $trueValue;
                                         @endphp
-                                        <label class="inline-flex items-center cursor-pointer" 
-                                            x-data
-                                            x-on:click.prevent="
-                                                if (confirm('Are you sure you want to change this?')) {
-                                                    $wire.toggleBoolean({{ $row->id }}, '{{ $col }}')
-                                                }
-                                            ">
-                                            <input type="checkbox"
-                                                class="sr-only peer"
-                                                @checked($isTrue)>
-                                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 transition"></div>
-                                            <span class="ml-2">
-                                                {{ $isTrue ? ($config['label_true'] ?? 'Yes') : ($config['label_false'] ?? 'No') }}
-                                            </span>
-                                        </label>
-                                        {{-- <label class="inline-flex items-center cursor-pointer">
-                                            <input type="checkbox"
-                                                class="sr-only peer"
-                                                @checked($isTrue)
+
+                                        <div class="flex justify-{{ $this->getAlignColumn($col) }}">
+                                            <label class="inline-flex items-center cursor-pointer" 
+                                                x-data
                                                 x-on:click.prevent="
                                                     if (confirm('Are you sure you want to change this?')) {
-                                                        $wire.dispatch('toggle-boolean', { id: {{ $row->id }}, column: '{{ $col }}' })
+                                                        $wire.toggleBoolean({{ $row->id }}, '{{ $col }}')
                                                     }
                                                 ">
-                                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 relative transition"></div>
-                                            <span class="ml-2">
-                                                {{ $isTrue
-                                                    ? ($config['label_true'] ?? 'Yes')
-                                                    : ($config['label_false'] ?? 'No') }}
-                                            </span>
-                                        </label> --}}
+                                                <input type="checkbox"
+                                                    class="sr-only peer"
+                                                    @checked($isTrue)>
+                                                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 transition"></div>
+                                                <span class="ml-2">
+                                                    {{ $isTrue ? ($config['label_true'] ?? 'Yes') : ($config['label_false'] ?? 'No') }}
+                                                </span>
+                                            </label>
+                                        </div>
                                     @else
                                         @if($this->hasSlot($col))
                                             {{ $this->getSlot($col)($row) }}

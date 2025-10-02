@@ -35,6 +35,7 @@ class DataTableComponent extends Component
     public $booleanColumns = [];
     public $booleanColumnsState = [];
     public $alignColumns = [];
+    public $statusColumns = [];
 
     public function mount(
         $model,
@@ -54,7 +55,8 @@ class DataTableComponent extends Component
         $availableColumns = [],
         $selectedColumns = [],
         $booleanColumns = [],
-        $alignColumns = []
+        $alignColumns = [],
+        $statusColumns = []
     ) {
         $this->model = $model;
 
@@ -63,6 +65,7 @@ class DataTableComponent extends Component
         $this->selectedColumns = $selectedColumns ?: $columns;
         $this->booleanColumns = $booleanColumns ?? [];
         $this->alignColumns = $alignColumns ?? [];
+        $this->statusColumns = $statusColumns ?? [];
 
         $this->filters = $filters;
         $this->theme = $theme ?? config('datatable.theme');
