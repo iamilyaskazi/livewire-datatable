@@ -154,7 +154,11 @@ class DataTableComponent extends Component
         $model->save();
 
         // force re-render
-        $this->resetPage();
+        // $this->resetPage();
+        
+        // Force a refresh of the component's view
+        // This will re-run the $rows loop and re-evaluate the @php block and @checked
+        $this->dispatch('$refresh'); 
 
         $this->dispatch('notify', "Updated {$column} for ID {$id}");
     }

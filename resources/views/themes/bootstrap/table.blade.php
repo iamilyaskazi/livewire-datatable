@@ -86,7 +86,7 @@
                                     $falseValue = $config['false'] ?? 0;
                                     $isTrue = $row->$col == $trueValue;
                                 @endphp
-                                <div class="form-check form-switch"
+                                {{-- <div class="form-check form-switch"
                                     x-data="{ checked: {{ $isTrue ? 'true' : 'false' }} }"
                                     x-effect="checked = {{ $row->$col == $trueValue ? 'true' : 'false' }}">
                                     <input type="checkbox"
@@ -106,7 +106,8 @@
                                             ? ($config['label_true'] ?? 'Yes')
                                             : ($config['label_false'] ?? 'No') }}
                                     </label>
-                                </div>
+                                </div> --}}
+                                
                                 {{-- <label class="inline-flex items-center cursor-pointer"
                                     x-data
                                     x-on:click.prevent="
@@ -122,6 +123,7 @@
                                         {{ $isTrue ? ($config['label_true'] ?? 'Yes') : ($config['label_false'] ?? 'No') }}
                                     </span>
                                 </label> --}}
+
                                 {{-- <div class="form-check form-switch">
                                     <input type="checkbox"
                                         class="form-check-input"
