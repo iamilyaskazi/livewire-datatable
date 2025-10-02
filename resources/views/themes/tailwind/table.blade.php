@@ -92,7 +92,22 @@
                                         $falseValue = $config['false'] ?? 0;
                                         $isTrue = $row->$col == $trueValue;
                                     @endphp
-                                    <label class="inline-flex items-center cursor-pointer">
+                                    <label class="inline-flex items-center cursor-pointer" 
+                                        x-data
+                                        x-on:click.prevent="
+                                            if (confirm('Are you sure you want to change this?')) {
+                                                $wire.toggleBoolean({{ $row->id }}, '{{ $col }}')
+                                            }
+                                        ">
+                                        <input type="checkbox"
+                                            class="sr-only peer"
+                                            @checked($isTrue)>
+                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 transition"></div>
+                                        <span class="ml-2">
+                                            {{ $isTrue ? ($config['label_true'] ?? 'Yes') : ($config['label_false'] ?? 'No') }}
+                                        </span>
+                                    </label>
+                                    {{-- <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox"
                                             class="sr-only peer"
                                             @checked($isTrue)
@@ -107,7 +122,7 @@
                                                 ? ($config['label_true'] ?? 'Yes')
                                                 : ($config['label_false'] ?? 'No') }}
                                         </span>
-                                    </label>
+                                    </label> --}}
                                 @else
                                     @if($this->hasSlot($col))
                                         {{ $this->getSlot($col)($row) }}

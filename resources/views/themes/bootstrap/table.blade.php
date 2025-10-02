@@ -62,7 +62,7 @@
         <thead>
             <tr>
                 @foreach($selectedColumns as $col)
-                    <th wire:click="sortBy('{{ $col }}')" style="cursor:pointer;">
+                    <th wire:click="sortBy('{{ $col }}')" style="cursor:pointer;" wire:key='thCol-{{ $loop->index }}'>
                         {{ $this->getColumnLabel($col) }}
                         @if($sortField === $col)
                             {!! $sortDirection === 'asc' ? '▲' : '▼' !!}
@@ -76,9 +76,9 @@
         </thead>
         <tbody>
             @forelse($rows as $row)
-                <tr wire:key='row-{{ $row->id }}'>
+                <tr wire:key='row-{{ $loop->index }}'>
                     @foreach($selectedColumns as $col)
-                        <td>
+                        <td wire:key='rowCol-{{ $loop->parent->index }}-{{ $loop->index }}'>
                             @if(isset($booleanColumns[$col]))
                                 @php
                                     $config = $booleanColumns[$col];
@@ -86,7 +86,39 @@
                                     $falseValue = $config['false'] ?? 0;
                                     $isTrue = $row->$col == $trueValue;
                                 @endphp
-                                <div class="form-check form-switch">
+                                <div class="form-check form-switch"
+                                    x-data
+                                    x-on:click.prevent="
+                                        if (confirm('Are you sure you want to change this?')) {
+                                            $wire.toggleBoolean({{ $row->id }}, '{{ $col }}')
+                                        }
+                                    ">
+                                    <input type="checkbox"
+                                        class="form-check-input"
+                                        role="switch"
+                                        @checked($isTrue)>
+                                    <label class="form-check-label">
+                                        {{ $isTrue
+                                            ? ($config['label_true'] ?? 'Yes')
+                                            : ($config['label_false'] ?? 'No') }}
+                                    </label>
+                                </div>
+                                {{-- <label class="inline-flex items-center cursor-pointer"
+                                    x-data
+                                    x-on:click.prevent="
+                                        if (confirm('Are you sure you want to change this?')) {
+                                            $wire.toggleBoolean({{ $row->id }}, '{{ $col }}')
+                                        }
+                                    ">
+                                    <input type="checkbox"
+                                        class="sr-only peer"
+                                        @checked($isTrue)>
+                                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 transition"></div>
+                                    <span class="ml-2">
+                                        {{ $isTrue ? ($config['label_true'] ?? 'Yes') : ($config['label_false'] ?? 'No') }}
+                                    </span>
+                                </label> --}}
+                                {{-- <div class="form-check form-switch">
                                     <input type="checkbox"
                                         class="form-check-input"
                                         @checked($isTrue)
@@ -100,7 +132,7 @@
                                             ? ($config['label_true'] ?? 'Yes')
                                             : ($config['label_false'] ?? 'No') }}
                                     </label>
-                                </div>
+                                </div> --}}
                             @else
                                 @if($this->hasSlot($col))
                                     {{ $this->getSlot($col)($row) }}

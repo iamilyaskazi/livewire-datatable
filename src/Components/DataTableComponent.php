@@ -141,11 +141,9 @@ class DataTableComponent extends Component
 
     public function toggleBoolean($id, $column)
     {
-        if (!isset($this->booleanColumns[$column])) {
-            return;
-        }
+        $config = $this->booleanColumns[$column] ?? null;
+        if (!$config) return;
 
-        $config = $this->booleanColumns[$column];
         $trueValue = $config['true'] ?? 1;
         $falseValue = $config['false'] ?? 0;
 
@@ -154,6 +152,9 @@ class DataTableComponent extends Component
         // Toggle & save
         $model->$column = ($model->$column == $trueValue) ? $falseValue : $trueValue;
         $model->save();
+
+        // force re-render
+        $this->resetPage();
 
         $this->dispatch('notify', "Updated {$column} for ID {$id}");
     }
