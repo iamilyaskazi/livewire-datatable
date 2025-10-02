@@ -93,24 +93,25 @@
                                         $isTrue = $row->$col == $trueValue;
                                     @endphp
 
-                                    <div class="form-check form-switch">
-                                        <input type="checkbox"
-                                            wire:key='cbToggle-{{ $loop->parent->index }}-{{ $loop->index }}'
-                                            wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')"
-                                            wire:loading.attr="disabled"
-                                            wire:model.live='booleanColumnsState.{{ $row->id }}.{{ $col }}'
-                                            class="form-check-input"
-                                            role="switch"
-                                            @checked($isTrue)
-                                        >
-                                        <label class="form-check-label" style="cursor: pointer;"
-                                            wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')">
-                                            {{ $isTrue
-                                                    ? ($config['label_true'] ?? 'Yes')
-                                                    : ($config['label_false'] ?? 'No') }}
-                                        </label>
+                                    <div class="d-flex justify-content-{{ $this->getAlignColumn($col) }}">
+                                        <div class="form-check form-switch">
+                                            <input type="checkbox"
+                                                wire:key='cbToggle-{{ $loop->parent->index }}-{{ $loop->index }}'
+                                                wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')"
+                                                wire:loading.attr="disabled"
+                                                wire:model.live='booleanColumnsState.{{ $row->id }}.{{ $col }}'
+                                                class="form-check-input"
+                                                role="switch"
+                                                @checked($isTrue)
+                                            >
+                                            <label class="form-check-label" style="cursor: pointer;"
+                                                wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')">
+                                                {{ $isTrue
+                                                        ? ($config['label_true'] ?? 'Yes')
+                                                        : ($config['label_false'] ?? 'No') }}
+                                            </label>
+                                        </div>
                                     </div>
-
                                 @else
                                     @if($this->hasSlot($col))
                                         {{ $this->getSlot($col)($row) }}
