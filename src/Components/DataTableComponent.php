@@ -137,7 +137,8 @@ class DataTableComponent extends Component
     public function toggleBoolean($id, $column)
     {
         $config = $this->booleanColumns[$column] ?? null;
-        if (!$config) return;
+        if (!$config)
+            return;
 
         $trueValue = $config['true'] ?? 1;
         $falseValue = $config['false'] ?? 0;
@@ -252,12 +253,10 @@ class DataTableComponent extends Component
             : $query->paginate($this->perPage);
 
         // Initialize boolean columns state
-        if (!empty($this->booleanColumns)) {
-            foreach ($rows as $row) {
-                foreach ($this->booleanColumns as $column => $config) {
-                    $trueValue = $config['true'] ?? 1;
-                    $this->booleanColumnsState[$row->id][$column] = $row->$column == $trueValue;
-                }
+        foreach ($rows as $row) {
+            foreach ($this->booleanColumns as $column => $config) {
+                $trueValue = $config['true'] ?? 1;
+                $this->booleanColumnsState[$row->id][$column] = $row->$column == $trueValue;
             }
         }
 
