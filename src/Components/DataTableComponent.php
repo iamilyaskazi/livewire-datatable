@@ -134,11 +134,16 @@ class DataTableComponent extends Component
         $this->dispatch('confirm-toggle', id: $id, column: $column);
     }
 
+    #[\Livewire\Attributes\On('toggle-boolean')]
+    public function handleToggleBoolean($id, $column)
+    {
+        $this->toggleBoolean($id, $column);
+    }
+
     public function toggleBoolean($id, $column)
     {
         $config = $this->booleanColumns[$column] ?? null;
-        if (!$config)
-            return;
+        if (!$config) return;
 
         $trueValue = $config['true'] ?? 1;
         $falseValue = $config['false'] ?? 0;
@@ -253,10 +258,12 @@ class DataTableComponent extends Component
             : $query->paginate($this->perPage);
 
         // Initialize boolean columns state
-        foreach ($rows as $row) {
-            foreach ($this->booleanColumns as $column => $config) {
-                $trueValue = $config['true'] ?? 1;
-                $this->booleanColumnsState[$row->id][$column] = $row->$column == $trueValue;
+        if (!empty($this->booleanColumns)) {
+            foreach ($rows as $row) {
+                foreach ($this->booleanColumns as $column => $config) {
+                    $trueValue = $config['true'] ?? 1;
+                    $this->booleanColumnsState[$row->id][$column] = $row->$column == $trueValue;
+                }
             }
         }
 
