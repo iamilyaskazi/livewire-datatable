@@ -90,7 +90,7 @@
                     <tr class="hover:bg-gray-50">
                         @foreach($availableColumns as $col)
                             @if(in_array($col, $selectedColumns))
-                                <td class="px-4 py-2 text-sm text-gray-700">
+                                <td class="px-4 py-2 text-sm text-gray-700 text-{{ $this->getColumnAlign($col) }}">
                                     @if(isset($booleanColumns[$col]))
                                         @php
                                             $config = $booleanColumns[$col];

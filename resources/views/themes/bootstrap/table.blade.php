@@ -84,7 +84,7 @@
                 <tr wire:key='row-{{ $loop->index }}'>
                     @foreach($availableColumns as $col)
                         @if(in_array($col, $selectedColumns))
-                            <td wire:key='rowCol-{{ $loop->parent->index }}-{{ $loop->index }}'>
+                            <td class="text-{{ $this->getColumnAlign($col) }}" wire:key='rowCol-{{ $loop->parent->index }}-{{ $loop->index }}'>
                                 @if(isset($booleanColumns[$col]))
                                     @php
                                         $config = $booleanColumns[$col];

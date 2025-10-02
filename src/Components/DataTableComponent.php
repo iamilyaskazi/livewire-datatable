@@ -34,6 +34,7 @@ class DataTableComponent extends Component
     public $selectedColumns = [];
     public $booleanColumns = [];
     public $booleanColumnsState = [];
+    public $alignColumns = [];
 
     public function mount(
         $model,
@@ -52,7 +53,8 @@ class DataTableComponent extends Component
         $resetLabel = null,
         $availableColumns = [],
         $selectedColumns = [],
-        $booleanColumns = []
+        $booleanColumns = [],
+        $alignColumns = []
     ) {
         $this->model = $model;
 
@@ -60,6 +62,7 @@ class DataTableComponent extends Component
         $this->availableColumns = $availableColumns ?: $columns;
         $this->selectedColumns = $selectedColumns ?: $columns;
         $this->booleanColumns = $booleanColumns ?? [];
+        $this->alignColumns = $alignColumns ?? [];
 
         $this->filters = $filters;
         $this->theme = $theme ?? config('datatable.theme');
@@ -160,6 +163,11 @@ class DataTableComponent extends Component
         $this->resetPage();
 
         $this->dispatch('notify', "Updated {$column} for ID {$id}");
+    }
+
+    public function getAlignColumn($col)
+    {
+        return $this->alignColumns[$col] ?? 'left';
     }
 
     public function updatingPerPage($value)
