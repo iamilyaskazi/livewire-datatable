@@ -33,7 +33,6 @@ class DataTableComponent extends Component
     public $availableColumns = [];
     public $selectedColumns = [];
     public $booleanColumns = [];
-    public $booleanColumnsState = [];
 
     public function mount(
         $model,
@@ -139,29 +138,6 @@ class DataTableComponent extends Component
     {
         $this->toggleBoolean($id, $column);
     }
-
-    public function toggleBoolean($id, $column)
-    {
-        $config = $this->booleanColumns[$column] ?? null;
-        if (!$config) return;
-
-        $trueValue = $config['true'] ?? 1;
-        $falseValue = $config['false'] ?? 0;
-
-        $model = $this->model::findOrFail($id);
-
-        // Toggle & save
-        $model->$column = ($model->$column == $trueValue) ? $falseValue : $trueValue;
-        $model->save();
-
-        // force re-render
-        $this->resetPage();
-
-        $this->booleanColumnsState[$id][$column] = $model->$column;
-
-        $this->dispatch('notify', "Updated {$column} for ID {$id}");
-    }
-
 
     public function updatingPerPage($value)
     {
