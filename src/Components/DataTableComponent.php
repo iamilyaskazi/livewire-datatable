@@ -234,6 +234,13 @@ class DataTableComponent extends Component
             ? $query->take($this->limit)->get()
             : $query->paginate($this->perPage);
 
+        foreach ($rows as $row) {
+            foreach ($this->booleanColumns as $column => $config) {
+                $trueValue = $config['true'] ?? 1;
+                $this->booleanColumnsState[$row->id][$column] = $row->$column == $trueValue;
+            }
+        }
+
         // Dynamically load theme view
         return view("datatable::themes.{$this->theme}.table", [
             'table' => config('datatable.themes.' . $this->theme),
