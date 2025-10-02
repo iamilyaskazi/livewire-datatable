@@ -87,16 +87,20 @@
                                     $isTrue = $row->$col == $trueValue;
                                 @endphp
                                 <div class="form-check form-switch"
-                                    x-data
-                                    x-on:click.prevent="
-                                        if (confirm('Are you sure you want to change this?')) {
-                                            $wire.toggleBoolean({{ $row->id }}, '{{ $col }}')
-                                        }
-                                    ">
+                                    x-data="{ checked: {{ $isTrue ? 'true' : 'false' }} }"
+                                    x-effect="checked = {{ $row->$col == $trueValue ? 'true' : 'false' }}">
                                     <input type="checkbox"
                                         class="form-check-input"
                                         role="switch"
-                                        @checked($isTrue)>
+                                        :checked="checked"
+                                        x-on:click.prevent="
+                                            if (confirm('Are you sure you want to change this?')) {
+                                                $wire.toggleBoolean({{ $row->id }}, '{{ $col }}')
+                                            } else {
+                                                // reset state if canceled
+                                                $event.target.checked = checked
+                                            }
+                                        ">
                                     <label class="form-check-label">
                                         {{ $isTrue
                                             ? ($config['label_true'] ?? 'Yes')
