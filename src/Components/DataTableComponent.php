@@ -245,9 +245,9 @@ class DataTableComponent extends Component
         $query = $this->model::query();
 
         // Apply search
-        if ($this->search && count($this->columns)) {
+        if ($this->search && count($this->selectedColumns)) {
             $query->where(function ($q) {
-                foreach ($this->columns as $column) {
+                foreach ($this->selectedColumns as $column) {
                     $q->orWhere($column, 'like', "%{$this->search}%");
                 }
             });
