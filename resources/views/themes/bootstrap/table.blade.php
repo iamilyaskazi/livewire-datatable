@@ -125,11 +125,6 @@
                             </td>
                         @endif
                     @endforeach
-                    @if($this->hasSlot('actions'))
-                        <td>
-                            {{ $this->getSlot('actions')($row) }}
-                        </td>
-                    @endif
                 </tr>
             @empty
                 <tr>
