@@ -2,6 +2,7 @@
 
 namespace IamIlyasKazi\LivewireDataTable\Components;
 
+use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 use Livewire\WithPagination;
 use IamIlyasKazi\LivewireDataTable\Traits\WithColumnFormatter;
@@ -248,7 +249,9 @@ class DataTableComponent extends Component
         if ($this->search && count($this->selectedColumns)) {
             $query->where(function ($q) {
                 foreach ($this->selectedColumns as $column) {
-                    $q->orWhere($column, 'like', "%{$this->search}%");
+                    if (Schema::hasColumn((new $this->model)->getTable(), $column)) {
+                        $q->orWhere($column, 'like', "%{$this->search}%");
+                    }
                 }
             });
         }
