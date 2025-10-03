@@ -79,6 +79,9 @@
                             </th>
                         @endif
                     @endforeach
+                    @if(count($rowActions))
+                        <th class="px-4 py-2 text-center">Actions</th>
+                    @endif
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
@@ -132,6 +135,39 @@
                                 </td>
                             @endif
                         @endforeach
+                        @if(count($rowActions))
+                            <td class="px-4 py-2 text-center">
+                                @if($rowActionType === 'buttons')
+                                    @foreach($rowActions as $config)
+                                        <button type="button"
+                                                class="px-3 py-1 text-sm font-medium rounded-md text-white
+                                                    bg-{{ $config['color'] ?? 'blue' }}-600 hover:bg-{{ $config['color'] ?? 'blue' }}-700 mr-1"
+                                                wire:click="{{ $config['method'] }}({{ $row->id }})">
+                                            {{ $config['label'] }}
+                                        </button>
+                                    @endforeach
+                                @else
+                                    <div class="relative inline-block text-left" x-data="{ open: false }">
+                                        <button type="button"
+                                                class="px-3 py-1 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300"
+                                                x-on:click="open = !open">
+                                            Actions
+                                        </button>
+                                        <div x-show="open" x-transition
+                                            class="absolute right-0 mt-2 w-28 bg-white border rounded-md shadow-lg z-10">
+                                            @foreach($rowActions as $config)
+                                                <a href="#"
+                                                class="block px-3 py-1 text-sm text-gray-700 hover:bg-gray-100"
+                                                wire:click.prevent="{{ $config['method'] }}({{ $row->id }})"
+                                                x-on:click="open = false">
+                                                    {{ $config['label'] }}
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            </td>
+                        @endif
                     </tr>
                 @empty
                     <tr>

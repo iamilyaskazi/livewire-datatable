@@ -16,18 +16,14 @@
                 @foreach($availableColumns as $col)
                     <li>
                         <label class="form-check-label">
-                            <input type="checkbox" 
-                                class="form-check-input" 
-                                wire:model.live="selectedColumns"
-                                value="{{ $col }}"
-                                @checked(in_array($col, $selectedColumns))>
+                            <input type="checkbox" class="form-check-input" wire:model.live="selectedColumns"
+                                value="{{ $col }}" @checked(in_array($col, $selectedColumns))>
                             {{ $this->getColumnLabel($col) }}
                         </label>
                     </li>
                 @endforeach
             </ul>
         </div>
-
 
         <!-- Per Page Options -->
         @if($paginationMode === 'pagination')
@@ -74,6 +70,9 @@
                         </th>
                     @endif
                 @endforeach
+                @if(count($rowActions))
+                    <th class="text-center">Actions</th>
+                @endif
             </tr>
         </thead>
         <tbody>
@@ -81,8 +80,9 @@
                 <tr wire:key='row-{{ $loop->index }}'>
                     @foreach($availableColumns as $col)
                         @if(in_array($col, $selectedColumns))
-                            <td class="text-{{ $this->getAlignColumn($col) }}" wire:key='rowCol-{{ $loop->parent->index }}-{{ $loop->index }}'>
-                                
+                            <td class="text-{{ $this->getAlignColumn($col) }}"
+                                wire:key='rowCol-{{ $loop->parent->index }}-{{ $loop->index }}'>
+
                                 @if(isset($statusColumns[$col]))
                                     @php
                                         $statusValue = $row->$col;
@@ -101,20 +101,16 @@
                                     @endphp
                                     <div class="d-flex justify-content-{{ $this->getAlignColumn($col) }}">
                                         <div class="form-check form-switch">
-                                            <input type="checkbox"
-                                                wire:key='cbToggle-{{ $loop->parent->index }}-{{ $loop->index }}'
+                                            <input type="checkbox" wire:key='cbToggle-{{ $loop->parent->index }}-{{ $loop->index }}'
                                                 wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')"
                                                 wire:loading.attr="disabled"
-                                                wire:model.live='booleanColumnsState.{{ $row->id }}.{{ $col }}'
-                                                class="form-check-input"
-                                                role="switch"
-                                                @checked($isTrue)
-                                            >
+                                                wire:model.live='booleanColumnsState.{{ $row->id }}.{{ $col }}' class="form-check-input"
+                                                role="switch" @checked($isTrue)>
                                             <label class="form-check-label" style="cursor: pointer;"
                                                 wire:click.prevent="confirmToggle({{ $row->id }}, '{{ $col }}')">
                                                 {{ $isTrue
-                                                        ? ($config['label_true'] ?? 'Yes')
-                                                        : ($config['label_false'] ?? 'No') }}
+                                    ? ($config['label_true'] ?? 'Yes')
+                                    : ($config['label_false'] ?? 'No') }}
                                             </label>
                                         </div>
                                     </div>
@@ -125,6 +121,36 @@
                             </td>
                         @endif
                     @endforeach
+
+                    @if(count($rowActions))
+                        <td class="text-center">
+                            @if($rowActionType === 'buttons')
+                                @foreach($rowActions as $config)
+                                    <button type="button" class="btn btn-sm btn-{{ $config['color'] ?? 'primary' }} me-1"
+                                        wire:click="{{ $config['method'] }}({{ $row->id }})">
+                                        {{ $config['label'] }}
+                                    </button>
+                                @endforeach
+                            @else
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        @foreach($rowActions as $config)
+                                            <li>
+                                                <a href="#" class="dropdown-item"
+                                                    wire:click.prevent="{{ $config['method'] }}({{ $row->id }})">
+                                                    {{ $config['label'] }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                        </td>
+                    @endif
                 </tr>
             @empty
                 <tr>
