@@ -74,9 +74,6 @@
                         </th>
                     @endif
                 @endforeach
-                @if($this->hasSlot('actions'))
-                    <th>Actions</th>
-                @endif
             </tr>
         </thead>
         <tbody>
@@ -123,11 +120,7 @@
                                     </div>
 
                                 @else
-                                    @if($this->hasSlot($col))
-                                        {{ $this->getSlot($col)($row) }}
-                                    @else
-                                        {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
-                                    @endif
+                                    {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
                                 @endif
                             </td>
                         @endif
@@ -140,7 +133,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ count($selectedColumns) + ($this->hasSlot('actions') ? 1 : 0) }}" class="text-center">
+                    <td colspan="{{ count($selectedColumns) }}" class="text-center">
                         No results found
                     </td>
                 </tr>

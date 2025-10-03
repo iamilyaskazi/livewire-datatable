@@ -23,7 +23,6 @@ class DataTableComponent extends Component
     public $sortField;
     public $sortDirection = 'asc';
     public $columnLabels = [];
-    public $columnSlots = [];
 
     public $showSearch;
     public $searchPlaceholder;
@@ -37,6 +36,10 @@ class DataTableComponent extends Component
     public $alignColumns = [];
     public $statusColumns = [];
 
+    public $rowActions = [];
+    public $rowActionType = 'buttons'; // options: 'buttons' | 'dropdown'
+
+
     public function mount(
         $model,
         $columns = [],
@@ -47,7 +50,6 @@ class DataTableComponent extends Component
         $paginationMode = null,
         $perPageOptions = null,
         $columnLabels = [],
-        $columnSlots = [],
         $showSearch = null,
         $searchPlaceholder = null,
         $showReset = null,
@@ -56,7 +58,9 @@ class DataTableComponent extends Component
         $selectedColumns = [],
         $booleanColumns = [],
         $alignColumns = [],
-        $statusColumns = []
+        $statusColumns = [],
+        $rowActions = [],
+        $rowActionType = null
     ) {
         $this->model = $model;
 
@@ -78,11 +82,13 @@ class DataTableComponent extends Component
         $this->perPage = config('datatable.paginations.' . $this->paginationMode . '.per_page');
 
         $this->columnLabels = $columnLabels;
-        $this->columnSlots = $columnSlots;
         $this->showSearch = $showSearch ?? config('datatable.search.show');
         $this->searchPlaceholder = $searchPlaceholder ?? config('datatable.search.placeholder');
         $this->showReset = $showReset ?? config('datatable.reset.show');
         $this->resetLabel = $resetLabel ?? config('datatable.reset.label');
+
+        $this->rowActions = $rowActions ?? [];
+        $this->rowActionType = $rowActionType ?? 'buttons';
 
         // For load more mode
         $this->limit = $this->perPage;
@@ -149,7 +155,8 @@ class DataTableComponent extends Component
     public function toggleBoolean($id, $column)
     {
         $config = $this->booleanColumns[$column] ?? null;
-        if (!$config) return;
+        if (!$config)
+            return;
 
         $trueValue = $config['true'] ?? 1;
         $falseValue = $config['false'] ?? 0;
@@ -189,6 +196,11 @@ class DataTableComponent extends Component
         $this->resetPage();
     }
 
+    public function getRowActions(): array
+    {
+        return $this->rowActions;
+    }
+
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
@@ -199,16 +211,6 @@ class DataTableComponent extends Component
         }
 
         $this->resetPage();
-    }
-
-    public function hasSlot($col): bool
-    {
-        return isset($this->columnSlots[$col]);
-    }
-
-    public function getSlot($col)
-    {
-        return $this->columnSlots[$col] ?? null;
     }
 
     public function getColumnLabel($col)

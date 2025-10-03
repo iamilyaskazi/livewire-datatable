@@ -79,10 +79,6 @@
                             </th>
                         @endif
                     @endforeach
-                    @if($this->hasSlot('actions'))
-                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Actions
-                        </th>
-                    @endif
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
@@ -131,24 +127,15 @@
                                             </label>
                                         </div>
                                     @else
-                                        @if($this->hasSlot($col))
-                                            {{ $this->getSlot($col)($row) }}
-                                        @else
-                                            {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
-                                        @endif
+                                        {!! $this->renderColumn($col, $row) ?? $this->defaultColumnRender($col, $row) !!}
                                     @endif
                                 </td>
                             @endif
                         @endforeach
-                        @if($this->hasSlot('actions'))
-                            <td class="px-4 py-2 text-sm text-gray-700">
-                                {{ $this->getSlot('actions')($row) }}
-                            </td>
-                        @endif
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{ count($selectedColumns) + ($this->hasSlot('actions') ? 1 : 0) }}"
+                        <td colspan="{{ count($selectedColumns) }}"
                             class="px-4 py-2 text-center text-gray-500">
                             No results found
                         </td>
